@@ -7,3 +7,6 @@ sum: sum.c
 pi: pi.c
 	gcc pi.c -o pi -fopenmp -std=c99
 
+nest: nest.c
+	gcc nest.c -o nest -fopenmp -std=c99
+
