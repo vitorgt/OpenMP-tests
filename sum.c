@@ -4,7 +4,6 @@
 int main(int argc, char *argv[]){
 
 	int nThreads = 4;
-
 	omp_set_num_threads(nThreads);
 
 	int n = 0;
@@ -25,7 +24,7 @@ int main(int argc, char *argv[]){
 	 * copyin(list)
 	 * reduction(operator: list) //basic operators only
 	 */
-	#pragma omp parallel num_threads(nThreads)
+	#pragma omp parallel
 	{
 		int at = omp_get_thread_num();
 		int end = (at+1)*(n/nThreads);
@@ -52,13 +51,10 @@ int main(int argc, char *argv[]){
 		sum2 += sum2P[i];
 	}
 
-	#pragma omp parallel num_threads(nThreads) reduction(+: sum3)
-	{
-		#pragma omp for
-		for(int i = 0; i <= n; i++){
-			//printf("Hello from thread #%d iteration #%d\n", omp_get_thread_num(), i);
-			sum3 += i;
-		}
+	#pragma omp parallel for reduction(+: sum3)
+	for(int i = 0; i <= n; i++){
+		//printf("Hello from thread #%d iteration #%d\n", omp_get_thread_num(), i);
+		sum3 += i;
 	}
 
 	printf("Sum1 from 0 to %d = %.0lf\n", n, sum1);
