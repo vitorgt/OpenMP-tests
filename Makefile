@@ -1,3 +1,3 @@
 hello: hello.c
-	gcc -fopenmp hello.c -o hello
+	gcc hello.c -o hello -fopenmp
 
