@@ -15,6 +15,7 @@ int main(int argc, char *argv[]){
 		sum1P[i] = sum2P[i] = 0;
 
 	/*
+	 * PARALLEL
 	 * if(expression)
 	 * num_threads(int|expression)
 	 * private(list)
