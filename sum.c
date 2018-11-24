@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
 
 	int n = 0;
 	scanf("%d", &n);
-	double sum1 = 0, sum2 = 0, sum3 = 0;
+	double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
 	double sum1P[nThreads];
 	double sum2P[nThreads];
 	for(int i = 0; i < nThreads+1; i++)
@@ -58,8 +58,33 @@ int main(int argc, char *argv[]){
 		sum3 += i;
 	}
 
+	#pragma omp parallel sections
+	{
+		#pragma omp section
+		{
+			double sumP = 0;
+			#pragma omp parallel for
+			for(int i = 0; i <= n; i += 2){
+				sumP += i;
+			}
+			#pragma omp atomic
+			sum4 += sumP;
+		}
+		#pragma omp section
+		{
+			double sumP = 0;
+			#pragma omp parallel for
+			for(int i = 1; i <= n; i += 2){
+				sumP += i;
+			}
+			#pragma omp atomic
+			sum4 += sumP;
+		}
+	}
+
 	printf("Sum1 from 0 to %d = %.0lf\n", n, sum1);
 	printf("Sum2 from 0 to %d = %.0lf\n", n, sum2);
 	printf("Sum3 from 0 to %d = %.0lf\n", n, sum3);
+	printf("Sum4 from 0 to %d = %.0lf\n", n, sum4);
 	return 0;
 }
