@@ -4,3 +4,6 @@ hello: hello.c
 sum: sum.c
 	gcc sum.c -o sum -fopenmp -std=c99
 
+pi: pi.c
+	gcc pi.c -o pi -fopenmp -std=c99
+
