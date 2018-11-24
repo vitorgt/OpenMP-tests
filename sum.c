@@ -9,11 +9,11 @@ int main(int argc, char *argv[]){
 
 	int n = 0;
 	scanf("%d", &n);
-	double sum = 0, sum2 = 0;
-	double sumP[nThreads];
-	double sumP2[nThreads];
+	double sum1 = 0, sum2 = 0, sum3 = 0;
+	double sum1P[nThreads];
+	double sum2P[nThreads];
 	for(int i = 0; i < nThreads+1; i++)
-		sumP[i] = sumP2[i] = 0;
+		sum1P[i] = sum2P[i] = 0;
 
 	/*
 	 * if(expression)
@@ -30,28 +30,39 @@ int main(int argc, char *argv[]){
 		int at = omp_get_thread_num();
 		int end = (at+1)*(n/nThreads);
 		for(int i = at*(n/nThreads); i < end; i++)
-			sumP[at] += i;
+			sum1P[at] += i;
 	}
 	if(n%4 == 0)
-		sum += n*((n%4)+1)-(n%4);
+		sum1 += n*((n%4)+1)-(n%4);
 	else if(n%4 == 1)
-		sum += n*((n%4)+1)-(n%4);
+		sum1 += n*((n%4)+1)-(n%4);
 	else if(n%4 == 2)
-		sum += n*((n%4)+1)-(n%4-1);
+		sum1 += n*((n%4)+1)-(n%4-1)-2;
 	else
-		sum += n*((n%4)+1)-2*(n%4);
+		sum1 += n*((n%4)+1)-2*(n%4);
+	for(int i = 0; i < nThreads; i++){
+		sum1 += sum1P[i];
+	}
 
 	#pragma omp parallel for
 	for(int i = 0; i <= n; i++){
-		sumP2[omp_get_thread_num()] += i;
+		sum2P[omp_get_thread_num()] += i;
 	}
-
 	for(int i = 0; i < nThreads; i++){
-		sum += sumP[i];
-		sum2 += sumP2[i];
+		sum2 += sum2P[i];
 	}
 
-	printf("Sum from 0 to %d = %.0lf\n", n, sum);
+	#pragma omp parallel num_threads(nThreads) reduction(+: sum3)
+	{
+		#pragma omp for
+		for(int i = 0; i <= n; i++){
+			//printf("Hello from thread #%d iteration #%d\n", omp_get_thread_num(), i);
+			sum3 += i;
+		}
+	}
+
+	printf("Sum1 from 0 to %d = %.0lf\n", n, sum1);
 	printf("Sum2 from 0 to %d = %.0lf\n", n, sum2);
+	printf("Sum3 from 0 to %d = %.0lf\n", n, sum3);
 	return 0;
 }
